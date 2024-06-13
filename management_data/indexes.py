@@ -1,7 +1,6 @@
 import time
 import faiss
 
-from .transformer_embeddings import embedding_function
 from .embeddings import embeddings
 
 

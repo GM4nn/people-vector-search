@@ -6,4 +6,7 @@ from .load_csv import people_data
 model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
 
 # Generate embeddings for each row
-embeddings = model.encode(people_data['combined_text'].tolist(), show_progress_bar=True)
+
+text_to_embeddings = people_data['people_births_date'].tolist()
+
+embeddings = model.encode(text_to_embeddings, show_progress_bar=True)
