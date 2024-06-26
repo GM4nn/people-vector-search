@@ -1,10 +1,9 @@
 import time
 import faiss
-
 from .embeddings import embeddings
 
 
-d = embeddings.shape[1]  # Dimension of embeddings
+d = embeddings.shape[1]
 index = faiss.IndexFlatL2(d)
 index.add(embeddings)
 
