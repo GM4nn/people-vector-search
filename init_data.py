@@ -23,25 +23,44 @@ def random_products_ids(products_ids: list):
     for _ in range(1, n_products + 1):
         random_product_id = products_ids[random.randint(0, len(products_ids) - 1)]
         products_random_ids.append(random_product_id)
-    print(f"products_random_ids {products_random_ids}")
+
     return products_random_ids
 
 
 async def load_products():
-    products_data = pd.read_csv('data\products.csv')
-    products_data.fillna('', inplace=True)
+    products_data1 = pd.read_csv('data\products_aurrera.csv')
+    products_data1.fillna('', inplace=True)
     
-    dict_list = products_data.to_dict('records')
+    products_data2 = pd.read_csv('data\products_casa_ley.csv')
+    products_data2.fillna('', inplace=True)
+    
+    products_data3 = pd.read_csv('data\products_heb.csv')
+    products_data3.fillna('', inplace=True)
+    
+    products_data4 = pd.read_csv('data\products_sams.csv')
+    products_data4.fillna('', inplace=True)
+            
+    products_data5 = pd.read_csv('data\products_soriana.csv')
+    products_data5.fillna('', inplace=True)
+    
+    dict_list1 = products_data1.to_dict('records')
+    dict_list2 = products_data2.to_dict('records')
+    dict_list3 = products_data3.to_dict('records')
+    dict_list4 = products_data4.to_dict('records')
+    dict_list5 = products_data5.to_dict('records')
+    
+    dict_list = dict_list1 + dict_list2 + dict_list3 + dict_list4 + dict_list5
     products = []
     
     for row in dict_list:
         product = Product(
             id = row['id'],
-            ean = row['original_ean'],
+            ean = str(row['original_ean']),
             name = row['original_name'],
             description = row['original_description'],
             current_price = str_to_float(row['current_price']),
             promo_price = str_to_float(row['promo_price']),
+            store = row['store']
         )
         
         products.append(product)
@@ -60,17 +79,6 @@ async def load_people(products_ids):
  
     if len(people_exists) == 0:
         for row in dict_list:
-     
-            product_links = [
-                Link(
-                    DBRef(
-                        collection='products',
-                        database=settings.MONGO_DB,
-                        id=id
-                    ), Product
-                ) 
-                for id in random_products_ids(products_ids)
-            ]
 
             person = Person(
                 id=row['User Id'],
@@ -81,7 +89,7 @@ async def load_people(products_ids):
                 phone=row['Phone'],
                 birth_date=row['Date of birth'],
                 job_title=row['Job Title'],
-                products=product_links
+                products=random_products_ids(products_ids)
             )
             
             people.append(person)
@@ -110,12 +118,6 @@ async def init():
     products_ids = list(products.inserted_ids)
     await load_people(products_ids)
 
-    """
-    person = await Person.get('751cD1cbF77e005')
-    print(person.first_name)
-    for product_link in person.products:
-        product = await product_link.fetch()
-        print(f" - {product.name} (EAN: {product.ean}, Precio: {product.current_price}, Precio promocional: {product.promo_price})")
-    """
+
 if __name__ == '__main__':
     asyncio.run(init())

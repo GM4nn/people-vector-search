@@ -1,18 +1,19 @@
 import asyncio
 import math
 import time
+from typing import Coroutine
 from motor.motor_asyncio import AsyncIOMotorClient
 from beanie import WriteRules, init_beanie, BulkWriter
 
 from models import Product
-from models import Person
 from management_data.embeddings import model
 from settings import settings
+from beanie.odm.queries.find import FindMany
 
-async def people_embeddings():
+async def products_embeddings():
     page_size = 500
     offset = 0
-    total_documents = await Person.count()
+    total_documents = await Product.count()
     total_pages = math.ceil(total_documents / page_size)
 
     
@@ -21,17 +22,19 @@ async def people_embeddings():
         
         print(f"PAGE {page}")
         
-        async for person in Person.find_all(limit=page_size, skip=offset):
+        products: FindMany[Product] = Product.find_all(limit=page_size, skip=offset)
+        
+        async for product in products:
 
-            print(f"EMBEDDING PERSON {person.first_name} - {person.last_name} WITH ID: {person.id}")
-            person.first_name_embedding = model.encode([person.first_name])[0].tolist()
-            person.last_name_embedding = model.encode([person.last_name])[0].tolist()
-            person.email_embedding = model.encode([person.email])[0].tolist()
-            person.phone_embedding = model.encode([person.phone])[0].tolist()
-            person.birth_date_embedding = model.encode([person.birth_date])[0].tolist()
-            person.job_title_embedding = model.encode([person.job_title])[0].tolist()
-            # Guardar los cambios en la base de datos
-            await person.save(ignore_revision=True, )
+            print(f"EMBEDDING PRODUCT {product.name} WITH ID: {product.id}")
+            product.name_embedding = model.encode([product.name])[0].tolist()
+            if product.ean:
+                product.ean_embedding = model.encode([product.ean])[0].tolist()
+            
+            if product.description:
+                product.description_embedding = model.encode([product.description])[0].tolist()
+
+            await product.save(ignore_revision=True)
         
 async def init():
     
@@ -44,12 +47,11 @@ async def init():
     
     models = [
         Product,
-        Person
     ]
 
     # Initialize beanie with the Sample document class and a database
     await init_beanie(database=client.get_default_database(), document_models=models)
-    await people_embeddings()
+    await products_embeddings()
 
 if __name__ == '__main__':
     asyncio.run(init())

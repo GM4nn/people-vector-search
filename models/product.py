@@ -9,7 +9,8 @@ class Product(Document):
     description: Optional[str] = None
     current_price: float
     promo_price: Optional[float] = None
-
+    store: str
+    
     ean_embedding: list[float] = []
     name_embedding: list[float] = []
     description_embedding: list[float] = []

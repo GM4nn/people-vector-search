@@ -13,14 +13,7 @@ class Person(Document):
     phone: str
     birth_date: str
     job_title: str
-    products: List[Link[Product]] = []
-
-    first_name_embedding: List[float] = []
-    last_name_embedding: List[float] = []
-    email_embedding: List[float] = []
-    phone_embedding: List[float] = []
-    birth_date_embedding: List[float] = []
-    job_title_embedding: List[float] = []
-
+    products: List[str] = []
+    
     class Settings:
         name = "people"
