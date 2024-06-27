@@ -1,15 +1,16 @@
+from pymongo import MongoClient
 import streamlit as st
-from ui.normal_search.search import search_with_field
-from ui.normal_search.table import table_from_people
+
 from ui.vector_search.search import search_with_field as search_with_field_vector
 from ui.vector_search.table import table_from_people as table_from_people_vector
-from  pymongo import MongoClient
+from ui.normal_search.search import search_with_field
+from ui.normal_search.table import table_from_people
 from settings import settings
 
 # Set page config (only once)
 st.set_page_config(layout="wide")
 
-st.title("Mi streamlit")
+st.title("Searchs")
 
 def init_connection():
     mongo_client = MongoClient(settings.MONGO_URI)

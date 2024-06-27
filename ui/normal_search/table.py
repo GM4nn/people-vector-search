@@ -1,11 +1,7 @@
+import pandas as pd
 import math
 
-from management_data.load_csv import people_data
 from settings import settings
-import pandas as pd
-
-# Initialize connection.
-# Uses st.cache_resource to only run once.
 
 def get_data(
     st,
@@ -65,5 +61,5 @@ def table_from_people(st, mongo_client):
 
     column2.markdown(f"<center>Page {st.session_state.page} of {total_pages}</center>",unsafe_allow_html=True)
 
-    if st.session_state.page  < (people_data.shape[0] - 1) // rows_per_page:
+    if st.session_state.page  < total_pages:
         column3.button("Siguiente", on_click=increment, use_container_width=True)

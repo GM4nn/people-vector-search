@@ -1,10 +1,10 @@
-import re
 import streamlit
-from settings import settings
+
 
 def search(st: streamlit, column, query):
     
     st.session_state.query_search = query
+    st.session_state.column = column
     st.session_state.page_v = 1
 
 def search_with_field(st: streamlit, mongo_client):

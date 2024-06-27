@@ -1,20 +1,13 @@
+import pandas as pd
+import streamlit
 import math
 
-import streamlit
-
-from management_data.load_csv import people_data
-from settings import settings
-import pandas as pd
 from management_data.embeddings import model
-
-# Initialize connection.
-# Uses st.cache_resource to only run once.
-
+from settings import settings
 
 def get_data(
     st: streamlit,
     mongo_client,
-    field: str = "name",
     limit: int = 10,
     offset: int = 0,
 ):
@@ -44,8 +37,11 @@ def get_data(
         items = list(items)
         return items, total
 
+    if "column" not in st.session_state:
+        st.session_state.column = 'name'
+     
     query_embedding = model.encode([st.session_state.query_search])[0].tolist()
-    vector_index = f"vector_index_{field}_embedding"
+    vector_index = f"vector_index_{st.session_state.column}_embedding"
 
     percentage = 0.50
     limit_of_vectors_data = 100
@@ -54,7 +50,7 @@ def get_data(
             "$vectorSearch": {
                 "index": vector_index,
                 "queryVector": query_embedding,
-                "path": f"{field}_embedding",
+                "path": f"{st.session_state.column}_embedding",
                 "numCandidates": 500,
                 "limit": limit_of_vectors_data,
             }
@@ -122,7 +118,7 @@ def table_from_people(st: streamlit, mongo_client):
         unsafe_allow_html=True,
     )
 
-    if st.session_state.page_v < (people_data.shape[0] - 1) // rows_per_page:
+    if st.session_state.page_v < total_pages:
         column3.button(
             "Siguiente", on_click=increment, use_container_width=True, key="next_v"
         )

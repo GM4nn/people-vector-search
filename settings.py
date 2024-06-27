@@ -4,7 +4,6 @@ class Settings(BaseSettings):
 
     MONGO_URI: str
     MONGO_DB: str
-    OPENAI_API_KEY: str
 
     class Config:
         env_file = ".env"

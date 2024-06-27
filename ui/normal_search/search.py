@@ -1,5 +1,7 @@
-import re
 import streamlit
+import re
+
+
 from settings import settings
 
 def search(st: streamlit, column, query):
@@ -15,8 +17,7 @@ def search_with_field(st: streamlit, mongo_client):
     document = collection.find_one()
     column_names = [
         key for key in list(document.keys())
-        if not key.endswith('embedding') 
-        and key != '_id'
+        if key != '_id'
         and key != 'products'
     ]
 

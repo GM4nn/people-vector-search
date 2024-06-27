@@ -20,7 +20,7 @@ Go to the project directory
 
 Create virtual environment
 
-```bash
+```bash  
   virtualenv venv
 ```
 

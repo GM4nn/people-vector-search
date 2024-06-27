@@ -1,8 +1,6 @@
 from typing import List, Optional
-from beanie import Document, Link
+from beanie import Document
 from pydantic import Field
-
-from models.product import Product
 
 class Person(Document):
     id: str = Field(default_factory=str, alias="_id")
